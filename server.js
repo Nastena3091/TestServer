@@ -6,7 +6,7 @@ const express = require("express"),
   (User = require("./models/UserModels"));
 const swaggerJsDocs=require("swagger-jsdoc");
 const swaggerUiExpress=require("swagger-ui-express");
-
+const bodyParser= require("body-parser");
 mongoose.connect("mongodb://localhost/users_db");
 
 
@@ -33,5 +33,7 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended:true}))
 routes(app);
 app.listen(port);

@@ -29,3 +29,34 @@ exports.addUser = function (req, res) {
     res.json(user);
   });
 };
+exports.removeUser = (req , res) => {
+  user.remove({
+    _id:req.params.userId,
+  },
+  (err, user) => {
+    if(err) res.send(err);
+    res.json({message:"Success"})
+  })
+}
+exports.updateUser = (req, res)=>{
+  user.findOneAndUpdate({
+    _id: req.params.userId
+  },
+  req.body, {new:true},
+  (err, user) => {
+    if(err) res.send(err);
+    res.json(user)
+  })
+}
+exports.getUsersByAge = (req,res)=>{
+  user.find({
+    age: {
+      $gt: req.params.from,
+      $lte: req.params.to,
+    }
+  },
+  (err, users) => {
+    if(err) res.send(err);
+    res.json(users)
+  })
+}
