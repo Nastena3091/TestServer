@@ -22,17 +22,23 @@ module.exports = function (app) {
    *                      type: integer
    *                      example: 18
    */
+   
   app.get("/user", userController.getListOfUsers);
   app.get("/user/:name", userController.getUsersByName);
   app.post("/user", userController.addUser);
   app.delete("/user/:userId", userController.removeUser);
   app.put("/user/:userId", userController.updateUser);
-  app.get("/user/user-by-age/:from/:to",userController.getUsersByAge);
+  app.get("/user-by-age/:from/:to",userController.getUsersByAge);
   app.delete("/remove-empty-document", userController.removeEmptyDocument);
   app.put("/add-height", userController.addFildHeight);
   app.get("/heights", userController.getHeightsUser);
-  app.get("/avr-height-gender", userController.getAverageHeightByGender)
-  app.get("/youngest", userController.getYoungest)
+
+  app.get("/avr-height-gender", userController.getAverageHeightByGender);
+  app.get("/youngest", userController.getYoungest);
+  app.delete("/remove-user-name-or-age", userController.removeUserNameOrAge);
+  app.get("/user-by-height/:from/:to",userController.getUsersByHeight);
+  
+
 };
 
 

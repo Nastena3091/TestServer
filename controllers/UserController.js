@@ -92,23 +92,57 @@ exports.getHeightsUser = (req,res)=>{
   .sort({"height":-1})
   .limit(1)
 }
-exports.getAverageHeightByGender = (res,req) => {
-  user.aggregate()
-  .group({
-      _id:"gender",
-      avg: {$avg:"height"}
-        },
+
+
+exports.getAverageHeightByGender = (req,res) => {
+  user.aggregate(
+    [
+      {
+        $group:
+          {
+            _id: "$gender",
+            avg: {$avg:"$height"}
+          }
+      }
+    ],
     (err, users) => {
       if(err) res.send(err);
       res.json(users)
     }
   )
 }
-exports.getYoungest = (res,req) => {
-  user.findOne({},
+exports.getYoungest = (req,res) => {
+  user.findOne({
+    age:{$exists:true}
+  },
     (err, users) => {
       if(err) res.send(err);
       res.json(users)
     })
   .sort({"age":1})
+}
+exports.removeUserNameOrAge = (req, res) => {
+  user.remove({ 
+    $or:[
+      { name: {$exists: false}, age: {$exists: true }},
+      { name: "", age: {$exists: true }},
+      { age: {$exists: false }, name: {$exists: true} },
+      { age: "", name: {$exists: true}}
+    ]},
+    (err, users) =>{
+      if(err) res.send(err);
+      res.json(users)
+    })
+}
+exports.getUsersByHeight=(req,res)=>{
+  user.find({
+    height: {
+      $gte: req.params.from,
+      $lte: req.params.to,
+    }
+  },
+  (err, users) => {
+    if(err) res.send(err);
+    res.json(users)
+  })
 }
