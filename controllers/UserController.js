@@ -1,3 +1,5 @@
+const { updateMany } = require("../models/UserModels");
+
 const mongoose = require("mongoose"),
   user = mongoose.model("Users");
 
@@ -18,7 +20,9 @@ exports.getUsersByName = function (req, res) {
 
       res.json(users);
     }
-  );
+  )
+  .sort({"age":-1})
+  .limit(2);
 };
 exports.addUser = function (req, res) {
   let newUser = new user(req.body);
@@ -59,4 +63,52 @@ exports.getUsersByAge = (req,res)=>{
     if(err) res.send(err);
     res.json(users)
   })
+}
+exports.removeEmptyDocument = (req,res)=>{
+  user.remove({
+    "name":{$exists:false}
+  }, (err,users)=>{
+    if(err)
+      res.status(404).send(err);
+    res.status(200).json({message:"Successful"})
+  }
+
+  )
+}
+exports.addFildHeight = (req,res)=>{
+  user.updateMany({},{$set:{"height":170}},
+  (err,users)=>{
+    if(err)
+      res.status(404).send(err);
+    res.status(200).json({message:"Successful"})}
+  )
+}
+exports.getHeightsUser = (req,res)=>{
+  user.find({},
+  (err, users) => {
+    if(err) res.send(err);
+    res.json(users)
+  })
+  .sort({"height":-1})
+  .limit(1)
+}
+exports.getAverageHeightByGender = (res,req) => {
+  user.aggregate()
+  .group({
+      _id:"gender",
+      avg: {$avg:"height"}
+        },
+    (err, users) => {
+      if(err) res.send(err);
+      res.json(users)
+    }
+  )
+}
+exports.getYoungest = (res,req) => {
+  user.findOne({},
+    (err, users) => {
+      if(err) res.send(err);
+      res.json(users)
+    })
+  .sort({"age":1})
 }
